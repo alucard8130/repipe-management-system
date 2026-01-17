@@ -16,9 +16,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "rest_framework",
     "corsheaders",
+    "apps.core",
+    "apps.users",
+    "apps.customers",
+    "apps.projects",
+    "apps.operations",
+    "apps.inventory",
 ]
 
 MIDDLEWARE = [
@@ -47,3 +52,23 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],  # O ajusta la ruta según tu estructura
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+ROOT_URLCONF = "config.urls"
+
+AUTH_USER_MODEL = "users.User"
+
