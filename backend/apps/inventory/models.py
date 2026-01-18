@@ -182,3 +182,9 @@ class InventoryMovement(TimeStampedModel):
     def __str__(self) -> str:
         return f"{self.material.code} {self.movement_type} {self.quantity}"
 
+
+#Vista lógica de stock (cómo se calcula)
+#SUM(IN.quantity) - SUM(OUT.quantity) ± ADJUST
+#SUM(InventoryMovement.total_cost WHERE project_id = X AND movement_type = OUT)
+
+

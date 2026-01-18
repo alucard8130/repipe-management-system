@@ -24,6 +24,9 @@ INSTALLED_APPS = [
     "apps.projects",
     "apps.operations",
     "apps.inventory",
+    "apps.billing",
+    "apps.documents",
+    "apps.client_portal",
 ]
 
 MIDDLEWARE = [
