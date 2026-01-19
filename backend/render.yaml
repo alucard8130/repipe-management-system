@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: repipe-backend
+    env: python
+    plan: starter
+    buildCommand: |
+      pip install -r backend/requirements.txt
+      python backend/manage.py collectstatic --noinput
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: PYTHONUNBUFFERED
+        value: "1"
