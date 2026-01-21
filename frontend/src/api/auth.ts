@@ -4,6 +4,7 @@ import api from "./client"
 
 export async function login(email: string, password: string) {
   const res = await api.post("/auth/token/", { email, password })
+  console.log("Login response:", res.data) // <-- Agrega esto
 
   const { access, refresh } = res.data
   localStorage.setItem("access_token", access)

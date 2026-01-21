@@ -11,7 +11,7 @@ class ProjectListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Project.objects.filter(company=user.company, is_active=True)
+        return Project.objects.filter(company=user.company, is_active=True).order_by("id")
 
 
 class ProjectDetailAPIView(generics.RetrieveAPIView):
@@ -20,4 +20,4 @@ class ProjectDetailAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Project.objects.filter(company=user.company, is_active=True)
+        return Project.objects.filter(company=user.company, is_active=True).order_by("id")

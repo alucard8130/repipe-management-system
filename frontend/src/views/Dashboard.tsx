@@ -17,9 +17,17 @@ export default function Dashboard() {
           onClick={handleLogout}
           className="text-red-600 hover:underline"
         >
+          
           Logout
         </button>
       </header>
+<nav className="flex gap-4">
+  <a href="/" className="hover:underline">Dashboard</a>
+  <a href="/projects" className="hover:underline">Projects</a>
+  <a href="/inventory" className="hover:underline">Inventory</a>
+  <a href="/kardex" className="hover:underline">Kardex</a>
+  <a href="/billing" className="hover:underline">Billing</a>
+</nav>
 
       <main className="p-4">
         <Outlet />

@@ -1,93 +1,137 @@
 import { useEffect, useState } from "react"
+import { fetchMaterials, consumeMaterial } from "../api/inventory"
 import api from "../api/client"
 
-interface Material {
+type Material = {
   id: number
   code: string
   name: string
   unit: string
-  category: string
   stock: string
+}
+
+type Project = {
+  id: number
+  project_number: string
 }
 
 export default function Inventory() {
   const [materials, setMaterials] = useState<Material[]>([])
-  const [loading, setLoading] = useState(true)
-  const [quantity, setQuantity] = useState<Record<number, string>>({})
+  const [projects, setProjects] = useState<Project[]>([])
+  const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null)
+  const [quantity, setQuantity] = useState("")
+  const [projectId, setProjectId] = useState("")
+  const [message, setMessage] = useState("")
 
   useEffect(() => {
-    api.get("/inventory/materials/")
-      .then((res) => setMaterials(res.data.results))
-      .catch(console.error)
-      .finally(() => setLoading(false))
+    fetchMaterials().then(setMaterials)
+    api.get("/projects/").then((res) => setProjects(res.data.results))
   }, [])
 
-  function consume(materialId: number) {
-    const qty = quantity[materialId]
-    if (!qty) return alert("Enter quantity")
+  async function handleConsume() {
+    if (!selectedMaterial || !projectId || !quantity) return
 
-    api.post("/inventory/consume/", {
-      material_id: materialId,
-      project_id: 1, // ⚠️ luego lo haces dinámico
-      quantity: qty,
-      reference_id: "UI-CONSUME",
-    })
-      .then(() => {
-        alert("Material consumed")
-        return api.get("/inventory/materials/")
+    try {
+      await consumeMaterial({
+        material_id: selectedMaterial.id,
+        project_id: Number(projectId),
+        quantity,
+        reference_id: "UI",
+        notes: "Consumed from Inventory UI",
       })
-      .then((res) => setMaterials(res.data.results))
-      .catch((err) => {
-        alert(err.response?.data?.error || "Error")
-      })
+
+      setMessage("Material consumed successfully")
+      setQuantity("")
+      setSelectedMaterial(null)
+      fetchMaterials().then(setMaterials)
+    } catch (err: any) {
+      setMessage(err.response?.data?.error || "Error consuming material")
+    }
   }
 
-  if (loading) return <p>Loading inventory...</p>
-
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Inventory</h1>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Inventory</h1>
 
-      <table className="w-full bg-white border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 border">Code</th>
-            <th className="p-2 border">Name</th>
-            <th className="p-2 border">Category</th>
-            <th className="p-2 border">Stock</th>
-            <th className="p-2 border">Consume</th>
-          </tr>
-        </thead>
-        <tbody>
-          {materials.map((m) => (
-            <tr key={m.id}>
-              <td className="p-2 border">{m.code}</td>
-              <td className="p-2 border">{m.name}</td>
-              <td className="p-2 border">{m.category}</td>
-              <td className="p-2 border font-bold">{m.stock}</td>
-              <td className="p-2 border">
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    className="border p-1 w-20"
-                    placeholder="Qty"
-                    value={quantity[m.id] || ""}
-                    onChange={(e) =>
-                      setQuantity({ ...quantity, [m.id]: e.target.value })
-                    }
-                  />
-                  <button
-                    onClick={() => consume(m.id)}
-                    className="bg-blue-600 text-white px-2 rounded"
-                  >
-                    Use
-                  </button>
-                </div>
-              </td>
+      {message && <p className="text-sm text-blue-600">{message}</p>}
+
+      {/* Materials table */}
+      <div className="bg-white rounded shadow p-4">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b text-left">
+              <th>Code</th>
+              <th>Name</th>
+              <th>Stock</th>
+              <th></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {materials.map((m) => (
+              <tr key={m.id} className="border-b">
+                <td className="py-2">{m.code}</td>
+                <td>{m.name}</td>
+                <td>{m.stock}</td>
+                <td>
+                  <button
+                    className="text-blue-600 hover:underline"
+                    onClick={() => setSelectedMaterial(m)}
+                  >
+                    Consume
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Consume modal */}
+      {selectedMaterial && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded w-96 space-y-4">
+            <h2 className="font-bold">
+              Consume {selectedMaterial.name}
+            </h2>
+
+            <input
+              type="number"
+              placeholder="Quantity"
+              className="w-full border p-2 rounded"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+            />
+
+            <select
+              className="w-full border p-2 rounded"
+              value={projectId}
+              onChange={(e) => setProjectId(e.target.value)}
+            >
+              <option value="">Select Project</option>
+              {projects.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.project_number}
+                </option>
+              ))}
+            </select>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setSelectedMaterial(null)}
+                className="px-3 py-1 border rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConsume}
+                className="px-3 py-1 bg-blue-600 text-white rounded"
+              >
+                Consume
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
