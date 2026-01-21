@@ -21,11 +21,14 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from apps.users.api.views import EmailTokenObtainPairView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
 
     # Auth
-    path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    #path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/auth/token/", EmailTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
     # API
