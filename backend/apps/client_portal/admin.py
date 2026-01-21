@@ -35,3 +35,4 @@ class ProjectShareLinkAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("revoked_at",)
+    readonly_fields = ("token_hash",)

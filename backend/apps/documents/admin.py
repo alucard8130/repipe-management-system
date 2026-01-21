@@ -11,7 +11,8 @@ class DocumentAdmin(admin.ModelAdmin):
         "visible_to_client",
         "file_size",
         "company",
-        "created_at",
+        "storage_type",
     )
-    list_filter = ("category", "visible_to_client", "company")
+    list_filter = ("category", "visible_to_client", "company", "storage_type")
     search_fields = ("file_name",)
+    readonly_fields= ("file_size",)

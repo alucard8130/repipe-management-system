@@ -6,6 +6,7 @@ from django.utils import timezone
 from apps.core.models import Company
 from apps.customers.models import Customer
 from apps.projects.models import Project
+from django.contrib.auth.hashers import make_password, check_password
 
 # --------------------------------------------------
 # CLIENT USER (LOGIN)
@@ -43,6 +44,12 @@ class ClientUser(models.Model):
 
     def __str__(self) -> str:
         return self.email
+    
+    def set_password(self, raw_password: str):
+        self.password_hash = make_password(raw_password)
+
+    def check_password(self, raw_password: str) -> bool:
+        return check_password(raw_password, self.password_hash)
 
 # --------------------------------------------------
 # PROJECT CLIENT ACCESS
