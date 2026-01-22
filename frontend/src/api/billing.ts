@@ -10,6 +10,15 @@ export async function fetchInvoice(id: number) {
   return res.data
 }
 
+export async function createInvoice(payload: {
+  project_id: number
+  total: string
+  due_date: string
+}) {
+  const res = await api.post("/billing/invoices/", payload)
+  return res.data
+}
+
 export async function createPayment(payload: {
   invoice_id: number
   amount: string

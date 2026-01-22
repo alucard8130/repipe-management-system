@@ -9,7 +9,7 @@ from .models import (
     ProjectLaborRate,
 )
 
-admin.site.register(Project)
+
 admin.site.register(ProjectScopeItem)
 admin.site.register(Estimate)
 admin.site.register(Contract)
@@ -17,11 +17,9 @@ admin.site.register(ProjectMilestone)
 admin.site.register(ProjectMaterialEstimate)
 admin.site.register(ProjectLaborRate)
 
-from django.contrib import admin
-from .models import Project, Milestone
 
 class MilestoneInline(admin.TabularInline):
-    model = Milestone
+    model = ProjectMilestone
     extra = 0
 
 @admin.register(Project)

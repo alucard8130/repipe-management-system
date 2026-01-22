@@ -10,6 +10,15 @@ import Kardex from "./views/Kardex"
 import ClientLogin from "./client/ClientLogin"
 import ClientLayout from "./client/ClientLayout"
 import ClientProject from "./client/ClientProject"
+import AdminLayout from "./admin/layout/AdminLayout"
+import AdminDashboard from "./admin/views/AdminDashboard"
+import ProjectsAdmin from "./admin/views/ProjectsAdmin"
+import ProjectDetail from "./admin/views/ProjectDetail"
+import DocumentsAdmin from "./admin/views/DocumentsAdmin"
+import ClientAccessDetail from "./admin/views/ClientAccessDetail"
+import ClientsAdmin from "./admin/views/ClientsAdmin"
+import InvoiceDetail from "./admin/views/InvoiceDetail"
+import BillingAdmin from "./admin/views/BillingAdmin"
 
 export default function Router() {
   return (
@@ -17,14 +26,7 @@ export default function Router() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        >
+        <Route path="/"element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
           <Route index element={<DashboardHome />} />
           <Route path="projects" element={<Projects />} />
           <Route path="inventory" element={<Inventory />} />
@@ -48,6 +50,23 @@ export default function Router() {
     </BrowserRouter>
   )
 }
+<Route
+  path="/admin"
+  element={
+    <ProtectedRoute>
+      <AdminLayout />
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<AdminDashboard />} />
+  <Route path="projects" element={<ProjectsAdmin />} />
+  <Route path="/admin/projects/:id" element={<ProjectDetail />} />
+  <Route path="/admin/documents" element={<DocumentsAdmin />} />
+  <Route path="/admin/clients" element={<ClientsAdmin />} />
+  <Route path="/admin/clients/:id" element={<ClientAccessDetail />} />
+  <Route path="/admin/billing" element={<BillingAdmin />} />
+  <Route path="/admin/billing/:invoiceId" element={<InvoiceDetail />} />
+</Route>
 
 
 
